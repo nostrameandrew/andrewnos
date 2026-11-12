@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#07041a">
+<title>Memory Breakout: 50 Years</title>
+<style>
+:root{
+  --bg:#07041a; --ink:#f4ecff; --dim:#a99cc9; --pink:#ff3fa4; --cyan:#29f0ff; --gold:#ffd84a; --lime:#7dff6a; --violet:#a86bff;
+  --panel:rgba(14,8,40,.86); --line:rgba(168,107,255,.45);
+  --hand:"Segoe Print","Bradley Hand","Snell Roundhand","Noteworthy","Comic Sans MS","Chalkboard SE",cursive;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);overflow:hidden;
+  font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;user-select:none;-webkit-user-select:none}
+#stage{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);touch-action:none}
+#cv{display:block;width:100%;height:100%;border-radius:10px;box-shadow:0 0 40px rgba(168,107,255,.25)}
+button{font:inherit;cursor:pointer;border:none}
+.btn{display:inline-block;margin:6px;padding:12px 22px;border-radius:999px;font-size:17px;font-weight:700;letter-spacing:.5px;
+  color:#fff;background:linear-gradient(135deg,#ff3fa4,#a86bff);box-shadow:0 0 18px rgba(255,63,164,.55),inset 0 0 8px rgba(255,255,255,.25);
+  transition:transform .12s, box-shadow .12s}
+.btn:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 0 28px rgba(255,63,164,.8)}
+.btn:active{transform:scale(.97)}
+.btn.alt{background:transparent;border:2px solid var(--cyan);color:var(--cyan);box-shadow:0 0 14px rgba(41,240,255,.35)}
+.btn.ghost{background:transparent;color:var(--dim);box-shadow:none;border:1px solid rgba(169,156,201,.4);font-size:15px;padding:9px 18px}
+.btn[disabled]{opacity:.35;pointer-events:none}
+.iconbtn{position:fixed;z-index:60;width:42px;height:42px;border-radius:50%;background:rgba(14,8,40,.7);color:#fff;font-size:20px;
+  border:1px solid var(--line);box-shadow:0 0 12px rgba(168,107,255,.4);display:flex;align-items:center;justify-content:center;padding:0}
+#muteBtn{top:max(10px,env(safe-area-inset-top));right:10px}
+#pauseBtn{top:max(10px,env(safe-area-inset-top));left:10px;display:none}
+.screen{position:fixed;inset:0;z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  padding:64px 16px 20px;background:radial-gradient(ellipse at center,rgba(20,8,50,.72),rgba(5,2,16,.92));overflow-y:auto}
+.screen.show{display:flex;animation:fadein .35s ease}
+.screen>*{flex-shrink:0}
+.screen::before,.screen::after{content:"";margin:auto}
+.screen.clear-bg{background:rgba(5,2,16,.55)}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.neon{font-weight:900;letter-spacing:2px;color:#fff;text-shadow:0 0 6px #fff,0 0 14px var(--pink),0 0 30px var(--pink),0 0 50px var(--violet)}
+.neon.cyan{text-shadow:0 0 6px #fff,0 0 14px var(--cyan),0 0 30px var(--cyan)}
+.neon.gold{text-shadow:0 0 6px #fff,0 0 14px var(--gold),0 0 30px #ff9d00}
+h1{margin:0 0 6px;font-size:clamp(34px,8vw,64px);line-height:1.05}
+h2{margin:0 0 10px;font-size:clamp(24px,5.5vw,38px)}
+.sub{color:var(--dim);font-size:clamp(14px,3.6vw,18px);margin:4px 0 18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 0 30px rgba(168,107,255,.25);max-width:640px;width:100%}
+.col{display:flex;flex-direction:column;align-items:center}
+.row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+.small{font-size:13px;color:var(--dim)}
+/* title */
+#title .big50{font-size:clamp(90px,26vw,190px);line-height:.9;margin:0}
+#title .tagline{font-size:clamp(16px,4vw,22px);color:var(--cyan);text-shadow:0 0 10px var(--cyan);margin:6px 0 24px;letter-spacing:4px}
+/* level clear + viewer */
+.photoFrame{position:relative;max-width:min(92vw,760px);border-radius:14px;padding:6px;background:linear-gradient(135deg,var(--pink),var(--cyan));
+  box-shadow:0 0 30px rgba(255,63,164,.6),0 0 60px rgba(41,240,255,.3)}
+.photoFrame img,.photoFrame canvas{display:block;max-width:100%;max-height:52vh;border-radius:9px;background:#000;margin:0 auto}
+.caption{font-size:clamp(16px,4.2vw,21px);max-width:680px;margin:16px auto 8px;line-height:1.4;white-space:pre-line}
+.tag{display:inline-block;padding:4px 12px;border-radius:999px;border:1px solid var(--gold);color:var(--gold);font-size:13px;letter-spacing:2px;margin-bottom:10px;text-shadow:0 0 8px var(--gold)}
+/* album */
+#album{justify-content:flex-start}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;width:100%;max-width:980px;margin:10px auto}
+.tile{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:#0d0628;border:1px solid var(--line);cursor:pointer;padding:0}
+.tile canvas,.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.tile .num{position:absolute;left:5px;top:4px;font-size:12px;font-weight:800;color:#fff;text-shadow:0 0 4px #000,0 0 8px #000}
+.tile.locked{cursor:default;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle,rgba(168,107,255,.18),rgba(7,4,26,1) 70%);animation:pulse 2.4s ease-in-out infinite}
+.tile.locked .sil{font-size:34px;filter:drop-shadow(0 0 6px var(--violet)) drop-shadow(0 0 12px var(--pink));opacity:.75}
+@keyframes pulse{0%,100%{box-shadow:0 0 6px rgba(168,107,255,.35) inset,0 0 8px rgba(168,107,255,.3)}50%{box-shadow:0 0 18px rgba(255,63,164,.6) inset,0 0 18px rgba(255,63,164,.5)}}
+.sectionTitle{width:100%;max-width:980px;text-align:left;margin:18px auto 4px;font-weight:800;color:var(--cyan);letter-spacing:2px;text-shadow:0 0 8px var(--cyan)}
+.mgGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;width:100%;max-width:980px}
+.mgTile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:left;color:var(--ink)}
+.mgTile b{display:block;font-size:16px;margin-bottom:4px}
+.mgTile .btn{font-size:13px;padding:7px 12px;margin:6px 4px 0 0}
+.albumTop{position:sticky;top:-64px;z-index:2;width:100%;max-width:980px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;
+  padding:6px 0;background:linear-gradient(rgba(10,4,30,.95),rgba(10,4,30,.75))}
+/* trivia */
+.choices{display:grid;grid-template-columns:1fr;gap:10px;margin:14px 0}
+@media(min-width:560px){.choices{grid-template-columns:1fr 1fr}}
+.choice{padding:14px;border-radius:12px;background:rgba(41,240,255,.08);border:2px solid rgba(41,240,255,.5);color:#fff;font-size:16px}
+.choice:hover{background:rgba(41,240,255,.18)}
+.choice.right{border-color:var(--lime);background:rgba(125,255,106,.25);box-shadow:0 0 16px var(--lime)}
+.choice.wrong{border-color:var(--pink);background:rgba(255,63,164,.2)}
+/* dadle */
+#dadleBoard{display:grid;gap:6px;margin:8px auto 12px}
+.drow{display:grid;gap:6px}
+.dcell{width:min(12vw,52px,6.2vh);height:min(12vw,52px,6.2vh);border:2px solid rgba(169,156,201,.45);border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:min(7vw,28px);font-weight:900;text-transform:uppercase;transition:background .3s,border-color .3s}
+.dcell.filled{border-color:#fff;box-shadow:0 0 8px rgba(255,255,255,.4)}
+.dcell.g{background:#18b85a;border-color:var(--lime);box-shadow:0 0 14px var(--lime)}
+.dcell.y{background:#c99a00;border-color:var(--gold);box-shadow:0 0 14px var(--gold)}
+.dcell.x{background:#2a2442;border-color:#2a2442}
+.kb{display:flex;flex-direction:column;gap:6px;width:100%;max-width:520px}
+.kb .r{display:flex;gap:5px;justify-content:center}
+.key{flex:1;max-width:44px;height:min(50px,6vh);border-radius:7px;background:#3a2f66;color:#fff;font-weight:800;font-size:16px;padding:0}
+.key.wide{max-width:72px;flex:1.6;font-size:13px}
+.key.g{background:#18b85a}.key.y{background:#c99a00}.key.x{background:#1a1530;color:#6c6290}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+/* bee */
+#beeWord{min-height:44px;font-size:30px;font-weight:900;letter-spacing:3px;margin:6px 0}
+#beeWord .c{color:var(--gold);text-shadow:0 0 10px var(--gold)}
+.hive{position:relative;width:260px;height:270px;margin:4px auto}
+.hex{position:absolute;width:84px;height:76px;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);background:#3a2f66;color:#fff;
+  font-size:30px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .1s}
+.hex:active{transform:scale(.92)}
+.hex.center{background:linear-gradient(135deg,#ffd84a,#ff9d00);color:#2a1600}
+#beeFound{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:560px;margin:8px auto;font-size:14px}
+#beeFound span{padding:3px 9px;border-radius:999px;background:rgba(41,240,255,.12);border:1px solid rgba(41,240,255,.4)}
+#beeFound span.p{background:rgba(255,216,74,.25);border-color:var(--gold)}
+#beeHint{font-family:monospace;font-size:22px;letter-spacing:6px;color:var(--gold);margin:6px 0}
+#beeMsg,#dadleMsg{min-height:24px;color:var(--cyan);font-weight:700}
+@media (max-width:480px),(max-height:760px){
+  #bee h2,#dadle h2{font-size:22px;margin-bottom:4px}
+  #bee .sub,#dadle .sub{font-size:13px;margin:0 0 6px}
+  #beeHint{font-size:16px;letter-spacing:3px;margin:2px 0}
+  #beeWord{font-size:24px;min-height:34px;margin:2px 0}
+  .hive{transform:scale(.82);margin:-22px auto}
+  #bee .btn{margin:4px}
+}
+/* in-game overlay buttons for canvas minigames */
+#mgButtons{position:fixed;z-index:30;display:none;gap:10px}
+#mgButtons .btn{margin:0;padding:0;width:88px;height:88px;border-radius:50%;font-size:17px;line-height:1.15;touch-action:none;
+  background:radial-gradient(circle at 35% 30%,#ff9a5a,#ff3b5c 60%,#a01040);box-shadow:0 0 24px rgba(255,90,60,.7)}
+#mgButtons .btn.held{transform:scale(.92);box-shadow:0 0 40px rgba(255,200,80,.95)}
+/* epilogue */
+#epilogue{background:#040210}
+.note{max-width:620px;width:100%;text-align:left;padding:28px 26px;border-radius:6px;color:#2a1a10;
+  background:repeating-linear-gradient(#fdf6e3 0 31px,#d9e4f2 31px 32px);box-shadow:0 0 40px rgba(255,216,74,.35),0 10px 40px rgba(0,0,0,.6);
+  font-family:var(--hand);font-size:clamp(17px,4.4vw,22px);line-height:32px;transform:rotate(-1deg);white-space:pre-wrap;min-height:200px}
+.note .sig{display:block;text-align:right;margin-top:16px}
+#collage{position:fixed;inset:0;z-index:21;display:none;flex-direction:column;align-items:center;justify-content:center;background:#040210;padding:16px;overflow-y:auto}
+#collage.show{display:flex}
+#collageGrid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;width:min(96vw,1100px)}
+@media (max-aspect-ratio:1/1){#collageGrid{grid-template-columns:repeat(5,1fr);width:min(96vw,520px)}}
+#collageGrid>*{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;opacity:0;transform:scale(.6) rotate(-6deg);transition:opacity .8s,transform .8s}
+#collageGrid>.in{opacity:1;transform:none}
+#collage h1{margin:14px 0 6px;opacity:0;transition:opacity 1.5s}
+#collage h1.in{opacity:1}
+#confetti{position:fixed;inset:0;z-index:25;pointer-events:none;display:none}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:80;background:var(--panel);border:1px solid var(--gold);color:var(--gold);
+  padding:10px 18px;border-radius:999px;display:none;box-shadow:0 0 18px rgba(255,216,74,.4)}
+.bonusMsg{font-size:clamp(17px,4.4vw,22px);line-height:1.5;white-space:pre-line;font-family:var(--hand);color:#fff;margin:10px 0 16px}
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="cv"></canvas></div>
+<button class="iconbtn" id="muteBtn" title="Sound on/off (M)" aria-label="Toggle sound">🔊</button>
+<button class="iconbtn" id="pauseBtn" title="Pause (P)" aria-label="Pause">⏸</button>
+<div id="mgButtons"><button class="btn" id="fireBtn">🔥<br>FIRE</button></div>
+
+<!-- TITLE -->
+<section class="screen show" id="title">
+  <div class="tag">★ 50 YEARS · A BIRTHDAY GAME ★</div>
+  <h1 class="neon">MEMORY BREAKOUT</h1>
+  <p class="big50 neon gold">50</p>
+  <div class="tagline">50 YEARS · 50 LEVELS · 50 MEMORIES</div>
+  <div class="col">
+    <button class="btn" id="continueBtn">▶ Continue</button>
+    <button class="btn alt" id="newBtn">✦ New Game</button>
+    <button class="btn alt" id="albumBtn">📷 Memory Album</button>
+    <button class="btn" id="endlessBtn" style="display:none;background:linear-gradient(135deg,#29f0ff,#a86bff)">∞ Endless Mode</button>
+  </div>
+  <p class="small" id="titleFrom" style="margin-top:22px"></p>
+  <p class="small" id="photoCheck"></p>
+  <p class="small">Mouse / arrow keys / touch-drag to move · Click, tap or Space to launch · P to pause</p>
+</section>
+
+<!-- CONFIRM -->
+<section class="screen" id="confirm">
+  <div class="panel col">
+    <h2 class="neon">Start over?</h2>
+    <p class="sub" id="confirmText">This erases saved progress and the Memory Album.</p>
+    <div class="row"><button class="btn" id="confirmYes">Yes, start fresh</button><button class="btn ghost" id="confirmNo">Cancel</button></div>
+  </div>
+</section>
+
+<!-- CHAPTER CARD -->
+<section class="screen" id="chapter">
+  <div class="tag" id="chapTag">CHAPTER 1</div>
+  <h1 class="neon" id="chapTitle"></h1>
+  <p class="sub" id="chapSub"></p>
+  <p class="small" id="chapInfo"></p>
+  <button class="btn" id="chapGo">Begin ▶</button>
+</section>
+
+<!-- LEVEL CLEAR -->
+<section class="screen" id="clear">
+  <div class="tag" id="clearTag">MEMORY UNLOCKED</div>
+  <div class="photoFrame" id="clearPhoto"></div>
+  <p class="caption" id="clearCaption"></p>
+  <p class="neon gold" id="clearScore" style="display:none;margin:0 0 6px;font-size:18px"></p>
+  <div class="row"><button class="btn" id="nextBtn">Next memory ▶</button><button class="btn ghost" id="clearAlbumBtn">Album</button></div>
+</section>
+
+<!-- ENDLESS MODE PICKER -->
+<section class="screen" id="endlessPick">
+  <div class="tag">UNLOCKED BY FINISHING THE GAME</div>
+  <h1 class="neon cyan">∞ Endless Modes</h1>
+  <div class="mgGrid" style="max-width:640px">
+    <div class="mgTile"><b>∞ Memory Breakout</b><span class="small">New brick levels forever, cycling through all 50 memories.</span><br><span class="small" id="epBestB"></span><br><button class="btn" id="epBreakout">▶ Play</button></div>
+    <div class="mgTile"><b>∞ Galaxy Guard</b><span class="small">Wave after wave, with tougher aliens and a Mothership every 5 waves.</span><br><span class="small" id="epBestG"></span><br><button class="btn" id="epGalaxy">▶ Play</button></div>
+  </div>
+  <button class="btn ghost" id="epBack" style="margin-top:14px">← Back</button>
+</section>
+
+<!-- ENDLESS MODE: GAME OVER -->
+<section class="screen clear-bg" id="endlessOver">
+  <div class="panel col">
+    <div class="tag">∞ ENDLESS MODE</div>
+    <h2 class="neon cyan" id="eoTitleH">Out of guys!</h2>
+    <p class="sub" id="eoStats"></p>
+    <p class="neon gold" id="eoBest" style="margin:0 0 14px"></p>
+    <div class="row"><button class="btn" id="eoAgain">↻ Play again</button><button class="btn ghost" id="eoAlbum">Album</button><button class="btn ghost" id="eoTitle">Title</button></div>
+  </div>
+</section>
+
+<!-- GAME OVER (level) -->
+<section class="screen clear-bg" id="lost">
+  <div class="panel col">
+    <h2 class="neon cyan">Out of guys!</h2>
+    <p class="sub">No worries. Try again with 5 fresh guys, or skip ahead and still unlock the photo.</p>
+    <div class="row"><button class="btn" id="retryBtn">↻ Try again</button><button class="btn alt" id="skipLevelBtn">Skip &amp; see the photo ▶</button><button class="btn ghost" id="lostQuit">Title</button></div>
+  </div>
+</section>
+
+<!-- PAUSE -->
+<section class="screen clear-bg" id="pause">
+  <div class="panel col">
+    <h2 class="neon">Paused</h2>
+    <div class="col"><button class="btn" id="resumeBtn">▶ Resume</button><button class="btn alt" id="restartBtn">↻ Restart</button>
+    <button class="btn ghost" id="quitBtn">Save & quit to title</button></div>
+    <p class="small">Progress is saved automatically after every memory.</p>
+  </div>
+</section>
+
+<!-- TRIVIA -->
+<section class="screen" id="trivia">
+  <div class="panel">
+    <div class="tag">WORD SMART · FAMILY TRIVIA</div>
+    <h2 id="trQ" style="font-size:clamp(19px,4.6vw,26px)"></h2>
+    <div class="choices" id="trChoices"></div>
+    <p id="trFact" class="sub" style="min-height:22px"></p>
+    <div class="row"><button class="btn" id="trNext" style="display:none">Continue ▶</button><button class="btn ghost" id="trSkip">Skip</button></div>
+  </div>
+</section>
+
+<!-- MINIGAME INTRO -->
+<section class="screen" id="mgIntro">
+  <div class="tag" id="mgTag">BONUS GAME</div>
+  <h1 class="neon cyan" id="mgTitle"></h1>
+  <div class="panel" style="margin:10px 0"><p id="mgHow" style="margin:0;line-height:1.5"></p></div>
+  <div class="row"><button class="btn" id="mgStart">Play ▶</button><button class="btn ghost" id="mgSkip">Skip for now</button></div>
+  <p class="small">Win to unlock a bonus message. You can replay it any time from the Album.</p>
+</section>
+
+<!-- MINIGAME RESULT -->
+<section class="screen" id="mgResult">
+  <div class="panel col">
+    <div class="tag" id="mgrTag">BONUS MESSAGE UNLOCKED</div>
+    <h2 class="neon gold" id="mgrTitle"></h2>
+    <p class="sub" id="mgrSub"></p>
+    <div class="bonusMsg" id="mgrMsg"></div>
+    <div class="row"><button class="btn" id="mgrNext">Continue ▶</button><button class="btn alt" id="mgrRetry">↻ Try again</button><button class="btn ghost" id="mgrSkip">Skip for now</button></div>
+  </div>
+</section>
+
+<!-- DAD-LE -->
+<section class="screen" id="dadle">
+  <h2 class="neon">DAD-LE</h2>
+  <p class="sub" id="dadleSub"></p>
+  <div id="dadleBoard"></div>
+  <div id="dadleMsg"></div>
+  <div class="kb" id="dadleKb"></div>
+  <button class="btn ghost" id="dadleQuit" style="margin-top:10px">Quit</button>
+</section>
+
+<!-- SPELLING BEE -->
+<section class="screen" id="bee">
+  <h2 class="neon gold">FAMILY SPELLING BEE</h2>
+  <p class="sub">Make words of 4+ letters. Every word needs the <b style="color:var(--gold)">gold</b> letter. Find the <b>pangram</b> (uses all 7) to win!</p>
+  <div id="beeHint"></div>
+  <div id="beeWord"></div>
+  <div id="beeMsg"></div>
+  <div class="hive" id="hive"></div>
+  <div class="row"><button class="btn ghost" id="beeDel">Delete</button><button class="btn ghost" id="beeShuf">⟳ Shuffle</button><button class="btn" id="beeEnter">Enter</button></div>
+  <div class="row"><button class="btn alt" id="beeHintBtn" style="font-size:14px;padding:8px 14px">💡 Hint</button><span class="small" id="beeScore"></span></div>
+  <div id="beeFound"></div>
+  <button class="btn ghost" id="beeQuit">Quit</button>
+</section>
+
+<!-- ALBUM -->
+<section class="screen" id="album">
+  <div class="albumTop"><h2 class="neon" style="margin:0">Memory Album</h2><div><span class="small" id="albumCount"></span> <button class="btn ghost" id="albumBack">← Back</button></div></div>
+  <div class="sectionTitle">50 MEMORIES</div>
+  <div class="grid" id="albumGrid"></div>
+  <div class="sectionTitle">BONUS GAMES & MESSAGES</div>
+  <div class="mgGrid" id="albumMg"></div>
+  <div class="sectionTitle" id="epiTitle">THE FINALE</div>
+  <div class="mgGrid" id="albumEpi"></div>
+  <div style="height:30px"></div>
+</section>
+
+<!-- VIEWER -->
+<section class="screen" id="viewer">
+  <div class="tag" id="viewTag"></div>
+  <div class="photoFrame" id="viewPhoto"></div>
+  <p class="caption" id="viewCaption"></p>
+  <div class="row"><button class="btn ghost" id="viewPrev">◀</button><button class="btn alt" id="viewReplay">↻ Replay level</button><button class="btn ghost" id="viewNext">▶</button></div>
+  <button class="btn ghost" id="viewClose">Close</button>
+</section>
+
+<!-- BONUS MESSAGE VIEW -->
+<section class="screen" id="msgView">
+  <div class="panel col"><div class="tag">BONUS MESSAGE</div><h2 class="neon gold" id="msgTitle"></h2><div class="bonusMsg" id="msgText"></div><button class="btn" id="msgClose">Close</button></div>
+</section>
+
+<!-- EPILOGUE -->
+<section class="screen" id="epilogue">
+  <div class="note" id="noteText"></div>
+  <button class="btn" id="noteNext" style="margin-top:22px;visibility:hidden">❤️ Continue</button>
+</section>
+<div id="collage">
+  <div id="collageGrid"></div>
+  <h1 class="neon gold" id="collageTitle"></h1>
+  <div class="row" id="collageBtns" style="opacity:0;transition:opacity 1s"><button class="btn" id="colAlbum">📷 Memory Album</button><button class="btn" id="colEndless" style="background:linear-gradient(135deg,#29f0ff,#a86bff)">∞ Endless Modes</button><button class="btn ghost" id="colTitle">Title screen</button></div>
+</div>
+<canvas id="confetti"></canvas>
+<div id="toast"></div>
+
+<script src="content.js"></script>
+<script src="words.js"></script>
+<script src="js/core.js"></script>
+<script src="js/breakout.js"></script>
+<script src="js/arcade.js"></script>
+<script src="js/wordgames.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
